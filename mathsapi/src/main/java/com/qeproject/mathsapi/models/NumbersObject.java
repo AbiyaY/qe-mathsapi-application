@@ -1,18 +1,18 @@
 package com.qeproject.mathsapi.models;
 
-public class Integers {
+public class NumbersObject {
 
     // Variables
     private Integer number1;
     private Integer number2;
 
     // Empty Constructor
-    public Integers(){
+    public NumbersObject(){
 
     }
 
     // Constructor
-    public Integers(Integer number1, Integer number2) {
+    public NumbersObject(Integer number1, Integer number2) {
         this.number1 = number1;
         this.number2 = number2;
     }

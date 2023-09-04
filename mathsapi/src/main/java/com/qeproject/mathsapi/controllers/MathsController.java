@@ -1,7 +1,7 @@
 package com.qeproject.mathsapi.controllers;
 
-import com.qeproject.mathsapi.models.Integers;
-import com.qeproject.mathsapi.models.Operator;
+import com.qeproject.mathsapi.models.NumbersObject;
+import com.qeproject.mathsapi.models.OperatorObject;
 import com.qeproject.mathsapi.services.MathsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,13 +21,13 @@ public class MathsController {
     }
 
     @PostMapping("/integers")
-    public void storeIntegers(@RequestBody Integers integers){
-        mathsService.storeIntegers(integers);
+    public void storeIntegers(@RequestBody NumbersObject numbersObject){
+        mathsService.storeIntegers(numbersObject);
     }
 
     @PostMapping("/operator")
-    public Double storeOperatorAndCalculate(@RequestBody Operator operator){
-        return mathsService.storeOperator(operator);
+    public Double storeOperatorAndCalculate(@RequestBody OperatorObject operatorObject){
+        return mathsService.storeOperator(operatorObject);
     }
 
 }

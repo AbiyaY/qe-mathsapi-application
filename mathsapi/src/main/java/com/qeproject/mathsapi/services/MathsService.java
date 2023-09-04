@@ -1,7 +1,7 @@
 package com.qeproject.mathsapi.services;
 
-import com.qeproject.mathsapi.models.Integers;
-import com.qeproject.mathsapi.models.Operator;
+import com.qeproject.mathsapi.models.NumbersObject;
+import com.qeproject.mathsapi.models.OperatorObject;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -10,18 +10,18 @@ import java.util.List;
 @Service
 public class MathsService {
 
-    private List<Integers> storedIntegers = new ArrayList<>();
+    private List<NumbersObject> storedIntegers = new ArrayList<>();
 
-    private List<Operator> storedOperator = new ArrayList<>();
-    public synchronized void storeIntegers(Integers integers) {
+    private List<OperatorObject> storedOperator = new ArrayList<>();
+    public synchronized void storeIntegers(NumbersObject numbersObject) {
         storedIntegers.clear();
-        storedIntegers.add(integers);
+        storedIntegers.add(numbersObject);
         notifyAll();
     }
 
-    public synchronized Double storeOperator(Operator operator) {
+    public synchronized Double storeOperator(OperatorObject operatorObject) {
         storedOperator.clear();
-        storedOperator.add(operator);
+        storedOperator.add(operatorObject);
 
         while (storedIntegers.isEmpty()) {
             try {
@@ -32,10 +32,10 @@ public class MathsService {
     }
 
     public Double calculate(){
-        Integers numbers = storedIntegers.get(0);
-        Operator operator = storedOperator.get(0);
+        NumbersObject numbers = storedIntegers.get(0);
+        OperatorObject operatorObject = storedOperator.get(0);
 
-        String transformedOperator = operator.getOperator().toLowerCase();
+        String transformedOperator = operatorObject.getOperator().toLowerCase();
         
         Double result = null;
 

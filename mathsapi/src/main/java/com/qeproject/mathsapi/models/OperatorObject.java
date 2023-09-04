@@ -1,17 +1,17 @@
 package com.qeproject.mathsapi.models;
 
-public class Operator {
+public class OperatorObject {
 
     // Variables
     private String operator;
 
     // Empty Constructor
-    public Operator(){
+    public OperatorObject(){
 
     }
 
     //Constructor
-    public Operator(String operator) {
+    public OperatorObject(String operator) {
         this.operator = operator;
     }
 

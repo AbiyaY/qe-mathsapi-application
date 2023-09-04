@@ -26,7 +26,7 @@ public class MathsController {
     }
 
     @PostMapping("/operator")
-    public Integer storeOperatorAndCalculate(@RequestBody Operator operator){
+    public Double storeOperatorAndCalculate(@RequestBody Operator operator){
         return mathsService.storeOperator(operator);
     }
 

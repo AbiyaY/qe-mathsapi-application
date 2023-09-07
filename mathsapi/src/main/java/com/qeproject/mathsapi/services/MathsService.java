@@ -11,8 +11,8 @@ import java.util.List;
 public class MathsService {
 
     private List<NumbersObject> storedIntegers = new ArrayList<>();
-
     private List<OperatorEnum> storedOperator = new ArrayList<>();
+  
     public synchronized void storeIntegers(NumbersObject numbersObject) {
         storedIntegers.clear();
         storedIntegers.add(numbersObject);
@@ -34,8 +34,6 @@ public class MathsService {
     public Double calculate(){
         NumbersObject numbers = storedIntegers.get(0);
         OperatorEnum operatorEnum = storedOperator.get(0);
-
-        //String transformedOperator = operatorEnum.getOperator().toLowerCase();
         
         Double result = null;
 
@@ -55,8 +53,8 @@ public class MathsService {
             case DIVIDE:
                 result = numbers.getNumber1().doubleValue() / numbers.getNumber2().doubleValue();
                 break;
-//            default:
-//                add exception here
+            //  default:
+            //  add exception here
         }
 
         return result;

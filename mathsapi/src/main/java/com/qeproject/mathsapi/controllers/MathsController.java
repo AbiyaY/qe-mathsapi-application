@@ -1,7 +1,7 @@
 package com.qeproject.mathsapi.controllers;
 
 import com.qeproject.mathsapi.models.NumbersObject;
-import com.qeproject.mathsapi.models.OperatorObject;
+import com.qeproject.mathsapi.models.OperatorEnum;
 import com.qeproject.mathsapi.services.MathsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,8 +26,9 @@ public class MathsController {
     }
 
     @PostMapping("/operator")
-    public Double storeOperatorAndCalculate(@RequestBody OperatorObject operatorObject){
-        return mathsService.storeOperator(operatorObject);
+    public Double storeOperatorAndCalculate(@RequestBody OperatorEnum operatorEnum){
+        System.out.println(operatorEnum);
+        return mathsService.storeOperator(operatorEnum);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.qeproject.mathsapi.services;
 
 import com.qeproject.mathsapi.models.NumbersObject;
-import com.qeproject.mathsapi.models.OperatorObject;
+import com.qeproject.mathsapi.models.OperatorEnum;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -11,17 +11,17 @@ import java.util.List;
 public class MathsService {
 
     private List<NumbersObject> storedIntegers = new ArrayList<>();
-
-    private List<OperatorObject> storedOperator = new ArrayList<>();
+    private List<OperatorEnum> storedOperator = new ArrayList<>();
+  
     public synchronized void storeIntegers(NumbersObject numbersObject) {
         storedIntegers.clear();
         storedIntegers.add(numbersObject);
         notifyAll();
     }
 
-    public synchronized Double storeOperator(OperatorObject operatorObject) {
+    public synchronized Double storeOperator(OperatorEnum operatorEnum) {
         storedOperator.clear();
-        storedOperator.add(operatorObject);
+        storedOperator.add(operatorEnum);
 
         while (storedIntegers.isEmpty()) {
             try {
@@ -33,30 +33,28 @@ public class MathsService {
 
     public Double calculate(){
         NumbersObject numbers = storedIntegers.get(0);
-        OperatorObject operatorObject = storedOperator.get(0);
-
-        String transformedOperator = operatorObject.getOperator().toLowerCase();
+        OperatorEnum operatorEnum = storedOperator.get(0);
         
         Double result = null;
 
-        switch(transformedOperator) {
-            case "add":
+        switch (operatorEnum) {
+            case ADD:
                 result = numbers.getNumber1().doubleValue() + numbers.getNumber2().doubleValue();
                 break;
 
-            case "subtract":
+            case SUBTRACT:
                 result = numbers.getNumber1().doubleValue() - numbers.getNumber2().doubleValue();
                 break;
 
-            case "multiply":
+            case MULTIPLY:
                 result = numbers.getNumber1().doubleValue() * numbers.getNumber2().doubleValue();
                 break;
 
-            case "divide":
+            case DIVIDE:
                 result = numbers.getNumber1().doubleValue() / numbers.getNumber2().doubleValue();
                 break;
-//            default:
-//                add exception here
+            //  default:
+            //  add exception here
         }
 
         return result;

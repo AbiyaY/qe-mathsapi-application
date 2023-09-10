@@ -4,26 +4,21 @@ import com.qeproject.mathsapi.models.NumbersObject;
 import com.qeproject.mathsapi.models.OperatorEnum;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 public class MathsService {
 
-    private List<NumbersObject> storedIntegers = new ArrayList<>();
-    private List<OperatorEnum> storedOperator = new ArrayList<>();
+    private NumbersObject numberRepo;
+    private OperatorEnum operator;
   
     public synchronized void storeIntegers(NumbersObject numbersObject) {
-        storedIntegers.clear();
-        storedIntegers.add(numbersObject);
+        this.numberRepo = numbersObject;
         notifyAll();
     }
 
     public synchronized Double storeOperator(OperatorEnum operatorEnum) {
-        storedOperator.clear();
-        storedOperator.add(operatorEnum);
+        this.operator = operatorEnum;
 
-        while (storedIntegers.isEmpty()) {
+        while (numberRepo == null) {
             try {
                 wait();
             } catch (InterruptedException e) { /* NCR */}
@@ -32,29 +27,28 @@ public class MathsService {
     }
 
     public Double calculate(){
-        NumbersObject numbers = storedIntegers.get(0);
-        OperatorEnum operatorEnum = storedOperator.get(0);
-        
+
         Double result = null;
 
-        switch (operatorEnum) {
+        switch (this.operator) {
             case ADD:
-                result = numbers.getNumber1().doubleValue() + numbers.getNumber2().doubleValue();
+                result = numberRepo.getNumber1().doubleValue() + numberRepo.getNumber2().doubleValue();
                 break;
 
             case SUBTRACT:
-                result = numbers.getNumber1().doubleValue() - numbers.getNumber2().doubleValue();
+                result = numberRepo.getNumber1().doubleValue() - numberRepo.getNumber2().doubleValue();
                 break;
 
             case MULTIPLY:
-                result = numbers.getNumber1().doubleValue() * numbers.getNumber2().doubleValue();
+                result = numberRepo.getNumber1().doubleValue() * numberRepo.getNumber2().doubleValue();
                 break;
 
             case DIVIDE:
-                result = numbers.getNumber1().doubleValue() / numbers.getNumber2().doubleValue();
+                result = numberRepo.getNumber1().doubleValue() / numberRepo.getNumber2().doubleValue();
                 break;
-            //  default:
-            //  add exception here
+
+            default:
+                throw new IllegalStateException("Operator '" + this.operator + "' is not supported");
         }
 
         return result;

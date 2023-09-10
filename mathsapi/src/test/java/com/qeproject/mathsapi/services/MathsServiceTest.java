@@ -1,101 +1,80 @@
 package com.qeproject.mathsapi.services;
 
+import com.qeproject.mathsapi.TestUtils;
 import com.qeproject.mathsapi.models.NumbersObject;
 import com.qeproject.mathsapi.models.OperatorEnum;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
+// Note on @DirtiesContext: This seems to cause the reinitialisation of the context
+// of the test. When removed, we may observe the following behaviour:
+// - testConcurrency() may run after testOperators()
+// - the above may leave dirty data in the MathsService class, which is effectively
+//   caching the last used numbers and operator
+// - Hence testConcurrency() is likely to work with number values that were left
+//   behind by a previous test case. DirtiesContext seems to resolve this.
 
-//@SpringBootTest
+@SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class MathsServiceTest
 {
-    MathsService service = new MathsService();
+    @Autowired
+    MathsService service;
+
     Double result;
 
+    /**
+     * The implementation of MathService relies on wait() and notifyAll() invocations.
+     * This tests aims at ensuring that the order of invocations won't cause a deadlock
+     */
     @Test
-    void testSomething()
+    void testConcurrency()
     {
-        Thread t1 = new Thread(() -> this.doT1Stuff());
-
-        Thread t2 = new Thread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                System.out.println("t2 entered");
-                service.storeIntegers(new NumbersObject(3, 5));
-//                System.out.println("t2 notify");
-//                synchronized (MathsServiceTest.class)
-//                {
-//                    MathsServiceTest.class.notify();
-//                }
-                System.out.println("t2 ending");
-            }
-        });
-
-//        Thread resultThread = new Thread(new Runnable()
-//        {
-//            @Override
-//            public void run()
-//            {
-////                System.out.println("resultThread entered");
-////
-////                while (result == null)
-////                {
-////                    try
-////                    {
-////                        System.out.println("resultThread wait");
-////                        synchronized (MathsServiceTest.class)
-////                        {
-////                            MathsServiceTest.class.wait();
-////                        }
-////                        System.out.println("resultThread awake");
-////                    }
-////                    catch (InterruptedException iex)
-////                    {
-////                        // CNR
-////                    }
-////                }
-//
-////                System.out.println("resultThread assert");
-////                Assertions.assertThat(result).isEqualTo(15);
-//            }
-//        });
-
+        Thread t1 = new Thread(() -> { result = service.storeOperator(OperatorEnum.MULTIPLY); });
+        Thread t2 = new Thread(() -> service.storeIntegers(new NumbersObject(3, 5)) );
 
         t1.start();
+        TestUtils.sleep(100); // give time to ensure MathsService.storeOperator goes into wait
         t2.start();
-//        resultThread.start();
 
         while (result == null)
         {
-            try
-            {
-                Thread.sleep(10);
-            }
-            catch (InterruptedException iex)
-            {
-                // CNR
-            }
+            TestUtils.sleep(10);
         }
 
-        Assertions.assertThat(result).isEqualTo(115);
+        Assertions.assertThat(result).isEqualTo(15);
     }
 
-    private void doT1Stuff()
+    @Test
+    void testOperators()
     {
-        System.out.println("t1 entered");
-        result = service.storeOperator(OperatorEnum.MULTIPLY);
-//        System.out.println("t1 #notify");
+        service.storeIntegers(new NumbersObject(3, 6));
 
-//        synchronized (MathsServiceTest.class)
-//        {
-//            MathsServiceTest.class.notify();
-//        }
+        assertThat(service.storeOperator(OperatorEnum.ADD)).isEqualTo(9.0);
+        assertThat(service.storeOperator(OperatorEnum.SUBTRACT)).isEqualTo(-3.0);
+        assertThat(service.storeOperator(OperatorEnum.DIVIDE)).isEqualTo(0.5);
+        assertThat(service.storeOperator(OperatorEnum.MULTIPLY)).isEqualTo(18.0);
 
-        System.out.println("t1 ending");
+        service.storeIntegers(new NumbersObject(3, -6));
+
+        assertThat(service.storeOperator(OperatorEnum.ADD)).isEqualTo(-3.0);
+        assertThat(service.storeOperator(OperatorEnum.SUBTRACT)).isEqualTo(9.0);
+        assertThat(service.storeOperator(OperatorEnum.DIVIDE)).isEqualTo(-0.5);
+        assertThat(service.storeOperator(OperatorEnum.MULTIPLY)).isEqualTo(-18.0);
+
+        service.storeIntegers(new NumbersObject(1.5, 2));
+
+        assertThat(service.storeOperator(OperatorEnum.ADD)).isEqualTo(3.5);
+        assertThat(service.storeOperator(OperatorEnum.SUBTRACT)).isEqualTo(-0.5);
+        assertThat(service.storeOperator(OperatorEnum.DIVIDE)).isEqualTo(0.75);
+        assertThat(service.storeOperator(OperatorEnum.MULTIPLY)).isEqualTo(3.0);
+
+        service.storeIntegers(new NumbersObject(-1.5, 2));
+        assertThat(service.storeOperator(OperatorEnum.MULTIPLY)).isEqualTo(-3.0);
     }
 }

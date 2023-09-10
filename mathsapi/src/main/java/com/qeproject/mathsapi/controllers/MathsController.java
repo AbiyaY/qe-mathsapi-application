@@ -18,7 +18,8 @@ public class MathsController {
     @Autowired
     private final MathsService mathsService;
 
-    public MathsController(MathsService mathsService) {
+    public MathsController(MathsService mathsService)
+    {
         this.mathsService = mathsService;
     }
 
@@ -33,7 +34,6 @@ public class MathsController {
     @PostMapping("/operator")
     public ResponseEntity<Double> storeOperatorAndCalculate(@RequestBody OperatorEnum operatorEnum){
 
-        System.out.println("here");
         Double result = mathsService.storeOperator(operatorEnum);
 
         return new ResponseEntity<Double>(result, HttpStatus.CREATED);

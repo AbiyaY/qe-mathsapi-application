@@ -46,7 +46,8 @@ class MathsControllerTest
     @Test
     void postIntegers_isBadRequest() throws Exception
     {
-        // Expect test to fail because number2 is not a number
+        // Expect test to fail because the value of number2 ("two") is a string
+        // instead of a number
         String badJson = """
             { "number1": "1", "number2" : "two" } 
             """;
@@ -58,6 +59,13 @@ class MathsControllerTest
                .andDo(MockMvcResultHandlers.print());
     }
 
+    /**
+     * THe aim if this test is to verify that we are able to reach the controller and that
+     * this returns the expected HTTP status. The value returned is mocked, meaning that
+     * we are not testing the service layer with this test.
+     *
+     * @throws Exception
+     */
     @Test
     void postOperator_isCreated_withResult() throws Exception
     {

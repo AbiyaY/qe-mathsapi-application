@@ -49,7 +49,7 @@ class MathsControllerTest
         // Expect test to fail because the value of number2 ("two") is a string
         // instead of a number
         String badJson = """
-            { "number1": "1", "number2" : "two" } 
+            { "number1": "1", "number2" : "two" }
             """;
         mockMvc.perform(MockMvcRequestBuilders.post("/mathservice/integers")
                                               .contentType(MediaType.APPLICATION_JSON)

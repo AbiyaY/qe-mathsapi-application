@@ -47,8 +47,8 @@ public class MathsService {
                 result = numberRepo.getNumber1().doubleValue() / numberRepo.getNumber2().doubleValue();
                 break;
 
-            default:
-                throw new IllegalStateException("Operator '" + this.operator + "' is not supported");
+//            default:
+//                throw new IllegalStateException("Operator '" + this.operator + "' is not supported");
         }
 
         return result;
